@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة X-O | الذكاء الاصطناعي والأنيميشن الاحترافي</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- خلفية الحبيبات والهالة التفاعلية -->
+    <div class="ambient-glow glow-green"></div>
+    <div class="ambient-glow glow-yellow"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="app-container">
+        <!-- الهيدر الرئيسي -->
+        <header class="app-header">
+            <div class="logo-badge">
+                <span class="badge-icon"><i class="fa-solid fa-brain"></i></span>
+                <span>PEAS & ODESDA AI Engine</span>
+            </div>
+            <h1 class="main-title">
+                <span class="text-green">X</span> & <span class="text-yellow">O</span>
+                <span class="title-sub">الذكاء الاصطناعي التفاعلي</span>
+            </h1>
+            <p class="header-desc">لعبة التحدي الذكي مع عرض حقيقي لـ <strong>Minimax Tree</strong> و <strong>سجل المستشعرات والقرارات</strong></p>
+        </header>
+
+        <!-- لوحة التحكم والنتيجة -->
+        <div class="top-bar">
+            <div class="difficulty-selector">
+                <span class="control-label"><i class="fa-solid fa-sliders"></i> المستوى:</span>
+                <div class="pill-group">
+                    <button class="pill-btn active" data-level="Impossible">
+                        <i class="fa-solid fa-brain text-yellow"></i> مستحيل (Minimax)
+                    </button>
+                    <button class="pill-btn" data-level="Medium">
+                        <i class="fa-solid fa-scale-balanced text-green"></i> متوسط
+                    </button>
+                    <button class="pill-btn" data-level="Easy">
+                        <i class="fa-solid fa-dice text-yellow"></i> سهل
+                    </button>
+                </div>
+            </div>
+
+            <!-- زر التبديل والوظائف -->
+            <div class="utility-actions">
+                <button id="peas-modal-btn" class="btn-secondary">
+                    <i class="fa-solid fa-book-open"></i> تحليل PEAS & ODESDA
+                </button>
+                <button id="sound-toggle-btn" class="icon-btn" title="كتم/تشغيل الصوت">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- المنطقة المركزية: شبكة اللعبة + شاشة تفكير الذكاء الاصطناعي -->
+        <main class="game-layout">
+            <!-- جانب اللعبة والشبكة -->
+            <section class="game-card glass-panel">
+                <!-- لوحة النقاط -->
+                <div class="scoreboard">
+                    <div class="score-card card-human">
+                        <span class="score-role">الإنسان (X)</span>
+                        <span class="score-val" id="score-human">0</span>
+                    </div>
+                    <div class="score-card card-draws">
+                        <span class="score-role">تعادل</span>
+                        <span class="score-val" id="score-draws">0</span>
+                    </div>
+                    <div class="score-card card-ai">
+                        <span class="score-role">الذكاء الاصطناعي (O)</span>
+                        <span class="score-val" id="score-ai">0</span>
+                    </div>
+                </div>
+
+                <!-- شريط الحالة التفاعلي -->
+                <div class="status-banner" id="status-banner">
+                    <div class="status-pulse green-pulse"></div>
+                    <span id="status-text">دورك الآن! اختر خلية للعب (X)</span>
+                </div>
+
+                <!-- شبكة اللعبة X-O (3x3 Grid) -->
+                <div class="board-wrapper">
+                    <svg class="winning-line-svg" id="winning-line-svg">
+                        <line id="winning-line" x1="0" y1="0" x2="0" y2="0" stroke="url(#line-gradient)" stroke-width="8" stroke-linecap="round" />
+                        <defs>
+                            <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00FF87" />
+                                <stop offset="100%" stop-color="#FFE600" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+
+                    <div class="xo-board" id="board">
+                        <button class="cell" data-index="0"></button>
+                        <button class="cell" data-index="1"></button>
+                        <button class="cell" data-index="2"></button>
+                        <button class="cell" data-index="3"></button>
+                        <button class="cell" data-index="4"></button>
+                        <button class="cell" data-index="5"></button>
+                        <button class="cell" data-index="6"></button>
+                        <button class="cell" data-index="7"></button>
+                        <button class="cell" data-index="8"></button>
+                    </div>
+                </div>
+
+                <!-- أزرار التحكم بالجولة -->
+                <div class="game-controls">
+                    <button class="btn-primary" id="reset-btn">
+                        <i class="fa-solid fa-rotate-right"></i> جولة جديدة
+                    </button>
+                    <button class="btn-danger" id="clear-score-btn">
+                        <i class="fa-solid fa-trash-can"></i> تصفير السجل
+                    </button>
+                </div>
+            </section>
+
+            <!-- جانب شاشة تفكير الذكاء الاصطناعي (AI Console) -->
+            <section class="console-card glass-panel">
+                <div class="console-header">
+                    <div class="console-title">
+                        <span class="terminal-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </span>
+                        <i class="fa-solid fa-terminal text-green"></i>
+                        <span>سجل تفكير الذكاء الاصطناعي (AI Console)</span>
+                    </div>
+                    <div class="ai-status-indicator" id="ai-indicator">
+                        <span class="pulse-dot"></span>
+                        <span id="ai-indicator-text">جاهز</span>
+                    </div>
+                </div>
+
+                <!-- شريط طاقة المحاكاة / التفكير -->
+                <div class="ai-think-bar-container">
+                    <div class="ai-think-bar" id="think-bar"></div>
+                </div>
+
+                <!-- جسم الشاشة المحاكية -->
+                <div class="console-body" id="console-body">
+                    <div class="log-entry log-system">
+                        <span class="log-time">[System]</span> مرحباً بك! هنا يتم عرض القراءات الحية لمكونات <strong>PEAS</strong> و <strong>ODESDA</strong> وشجرة <strong>Minimax Tree</strong> لكل حركة يفكر بها العميل الذكي.
+                    </div>
+                </div>
+
+                <div class="console-footer">
+                    <span class="console-stat" id="eval-count"><i class="fa-solid fa-microchip text-yellow"></i> تقييمات الشجرة: 0</span>
+                    <button class="console-clear-btn" id="clear-console-btn"><i class="fa-solid fa-eraser"></i> مسح السجل</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- نافذة المودال لشرح PEAS و ODESDA -->
+    <div class="modal-overlay" id="peas-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-graduation-cap text-yellow"></i> تحليل PEAS & ODESDA للعبة X-O</h2>
+                <button class="close-modal-btn" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-tabs">
+                    <button class="tab-btn active" data-tab="tab-peas">إطار PEAS Framework</button>
+                    <button class="tab-btn" data-tab="tab-odesda">إطار ODESDA Framework</button>
+                    <button class="tab-btn" data-tab="tab-compare">مقارنة بالسيارة ذاتية القيادة</button>
+                </div>
+
+                <div class="tab-content active" id="tab-peas">
+                    <div class="peas-grid">
+                        <div class="peas-box box-p">
+                            <h3><span class="badge green">P</span> Performance Measure</h3>
+                            <p><strong>مقياس الأداء:</strong> الفوز باللعبة (+10)، منع المنافس من الفوز، فرض التعادل (0) على الأقل، وتحقيق الفوز بأقل عدد خطوات.</p>
+                        </div>
+                        <div class="peas-box box-e">
+                            <h3><span class="badge yellow">E</span> Environment</h3>
+                            <p><strong>البيئة:</strong> رقعة شبكية 3x3. وهي بيئة مكشوفة بالكامل (Fully Observable)، حتمية، ساكنة، ومستقلة الخطوات.</p>
+                        </div>
+                        <div class="peas-box box-a">
+                            <h3><span class="badge green">A</span> Actuators</h3>
+                            <p><strong>المشغلات:</strong> اختيار وتعيين الرمز (X أو O) في الخلية المناسبة وتحديث الواجهة وإعلام اللاعب بالدور.</p>
+                        </div>
+                        <div class="peas-box box-s">
+                            <h3><span class="badge yellow">S</span> Sensors</h3>
+                            <p><strong>المستشعرات:</strong> فحص حالة المصفوفة، اكتشاف الخانات الفارغة والمشغولة، ودالة فحص الفوز أو التعادل.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-odesda">
+                    <ul class="odesda-list">
+                        <li><strong>O - Objective:</strong> الوصول للفوز أو التعادل وتجنب الخسارة تماماً.</li>
+                        <li><strong>D - Data:</strong> مصفوفة الرقعة الحالية والتاريخ وشجرة احتمالات خوارزمية Minimax.</li>
+                        <li><strong>E - Environment:</strong> رقعة 3x3 ذات 9 خلايا محدودة الحالات (5,478 حالة قانونية).</li>
+                        <li><strong>S - Sensors:</strong> قراءة إحداثيات الخانات وتحديد النقلة الأخيرة للمنافس.</li>
+                        <li><strong>D - Decisions:</strong> اختيار الخلية ذات أعلى تقييم مستقبلي عبر حساب Minimax.</li>
+                        <li><strong>A - Actions:</strong> رسم الرمز O في الخلية المستهدفة وإنهاء الدور.</li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="tab-compare">
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th>العنصر</th>
+                                <th>لعبة X-O ❌⭕</th>
+                                <th>السيارة ذاتية القيادة 🚗</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>الرؤية (Observability)</td>
+                                <td><span class="highlight-green">Fully Observable</span> (شاملة)</td>
+                                <td><span class="highlight-yellow">Partially Observable</span> (جزئية)</td>
+                            </tr>
+                            <tr>
+                                <td>الحتمية (Determinism)</td>
+                                <td>حتمية مؤكدة النتيجة</td>
+                                <td>احتمالية (Stochastic) وعشوائية الطقس</td>
+                            </tr>
+                            <tr>
+                                <td>تغير البيئة (Dynamics)</td>
+                                <td>ساكنة (Static) أثناء التفكير</td>
+                                <td>ديناميكية ومستمرة في الوقت الفعلي</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- احتفال الفوز Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
